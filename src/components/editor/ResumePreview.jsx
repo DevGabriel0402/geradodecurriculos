@@ -60,10 +60,13 @@ const Paper = styled.div`
     box-shadow: none;
     margin: 0;
     width: 210mm;
-    height: 297mm;
+    min-height: 297mm;
+    height: auto !important;
+    overflow: visible !important;
     background: ${({ $config }) => ($config?.backgroundColor || 'white')} !important;
     color: ${({ $config }) => ($config?.textColor || '#1a1a1a')} !important;
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 `;
 

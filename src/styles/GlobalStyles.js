@@ -10,7 +10,7 @@ export const GlobalStyles = createGlobalStyle`
 
   @media print {
     @page { 
-      margin: 0; 
+      margin: 10mm; 
       size: A4; 
     }
     html, body, #root { 
@@ -21,14 +21,22 @@ export const GlobalStyles = createGlobalStyle`
     .no-print { 
       display: none !important; 
     }
-    .resume-container { 
-      width: 210mm !important; 
-      min-height: 297mm !important; 
+    
+    /* Quebras de página inteligentes */
+    h1, h2, h3, .section-title {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+    
+    p, li, .experience-item, .education-item, .item-card, section {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    #resume-paper {
       height: auto !important;
-      margin: 0 auto !important; 
-      padding: 12mm !important;
-      box-shadow: none !important;
-      border: none !important;
+      min-height: 297mm !important;
     }
   }
   

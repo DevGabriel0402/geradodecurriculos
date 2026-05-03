@@ -8,6 +8,7 @@ import ResumePreview from '../components/editor/ResumePreview';
 import { templateService } from '../services/templateService';
 import { initialData, DEFAULT_TEMPLATES } from '../data/defaultTemplates';
 import toast from 'react-hot-toast';
+import Modal from '../components/common/Modal';
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
@@ -677,6 +678,7 @@ export default function Dashboard() {
   const [resumes, setResumes] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState({ open: false, type: 'warning', title: '', message: '', onConfirm: null });
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('list'); // 'list' ou 'templates'
   const [previewTemplate, setPreviewTemplate] = useState(null);
@@ -766,14 +768,17 @@ export default function Dashboard() {
   }
 
   async function handleDelete(id) {
-    if (window.confirm("Deseja realmente deletar este currículo?")) {
-      try {
-        await resumeService.deleteResume(id);
-        setResumes(resumes.filter(r => r.id !== id));
-        toast.success("Deletado com sucesso");
-      } catch (error) {
-        toast.error("Erro ao deletar");
-      }
+    setDeleteModal({ open: true, id });
+  }
+
+  async function confirmDelete() {
+    const id = deleteModal.id;
+    try {
+      await resumeService.deleteResume(id);
+      setResumes(resumes.filter(r => r.id !== id));
+      toast.success("Deletado com sucesso");
+    } catch (error) {
+      toast.error("Erro ao deletar");
     }
   }
 
@@ -1011,6 +1016,16 @@ export default function Dashboard() {
           <span>Novo</span>
         </NavItem>
       </BottomNav>
+      <Modal 
+        isOpen={deleteModal.open}
+        onClose={() => setDeleteModal({ open: false, id: null })}
+        onConfirm={confirmDelete}
+        type="warning"
+        title="Excluir Currículo"
+        message="Deseja realmente deletar este currículo? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelText="Voltar"
+      />
     </DashboardContainer>
   );
 }

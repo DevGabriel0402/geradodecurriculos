@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Função auxiliar para verificar se o usuário é admin
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Regras para a coleção 'users'
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Permite criar se for o dono e definir como user
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Permite atualizar se for o dono (sem mudar o role) ou se for admin
+      allow update: if request.auth != null && (isAdmin() || (request.auth.uid == userId && request.resource.data.role == resource.data.role));
+      allow delete: if isAdmin();
+    }
+
+    // Regras para a coleção 'resumes'
+    match /resumes/{resumeId} {
+      allow read, update, delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+
+    // Regras para a coleção 'templates'
+    match /templates/{templateId} {
+      allow read: if true;
+      allow write, create, delete: if isAdmin();
+    }
+  }
+}

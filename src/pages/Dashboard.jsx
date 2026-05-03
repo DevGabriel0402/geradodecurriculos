@@ -718,14 +718,21 @@ export default function Dashboard() {
 
   const handleDeleteTemplate = async (e, templateId) => {
     e.stopPropagation();
-    if (!window.confirm('Excluir este modelo?')) return;
-    try {
-      await templateService.deleteTemplate(templateId);
-      setTemplates(prev => prev.filter(t => t.id !== templateId));
-      toast.success('Modelo excluído');
-    } catch (error) {
-      toast.error('Erro ao excluir');
-    }
+    setModal({
+      open: true,
+      type: 'warning',
+      title: 'Excluir Modelo',
+      message: 'Deseja realmente excluir este modelo?',
+      onConfirm: async () => {
+        try {
+          await templateService.deleteTemplate(templateId);
+          setTemplates(prev => prev.filter(t => t.id !== templateId));
+          toast.success('Modelo excluído');
+        } catch (error) {
+          toast.error('Erro ao excluir');
+        }
+      }
+    });
   };
 
 
@@ -768,18 +775,21 @@ export default function Dashboard() {
   }
 
   async function handleDelete(id) {
-    setDeleteModal({ open: true, id });
-  }
-
-  async function confirmDelete() {
-    const id = deleteModal.id;
-    try {
-      await resumeService.deleteResume(id);
-      setResumes(resumes.filter(r => r.id !== id));
-      toast.success("Deletado com sucesso");
-    } catch (error) {
-      toast.error("Erro ao deletar");
-    }
+    setModal({
+      open: true,
+      type: 'warning',
+      title: 'Excluir Currículo',
+      message: 'Deseja realmente deletar este currículo? Esta ação não pode ser desfeita.',
+      onConfirm: async () => {
+        try {
+          await resumeService.deleteResume(id);
+          setResumes(prev => prev.filter(r => r.id !== id));
+          toast.success("Deletado com sucesso");
+        } catch (error) {
+          toast.error("Erro ao deletar");
+        }
+      }
+    });
   }
 
   return (
@@ -1017,13 +1027,13 @@ export default function Dashboard() {
         </NavItem>
       </BottomNav>
       <Modal 
-        isOpen={deleteModal.open}
-        onClose={() => setDeleteModal({ open: false, id: null })}
-        onConfirm={confirmDelete}
-        type="warning"
-        title="Excluir Currículo"
-        message="Deseja realmente deletar este currículo? Esta ação não pode ser desfeita."
-        confirmText="Excluir"
+        isOpen={modal.open}
+        onClose={() => setModal({ ...modal, open: false })}
+        onConfirm={modal.onConfirm}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+        confirmText="Confirmar"
         cancelText="Voltar"
       />
     </DashboardContainer>

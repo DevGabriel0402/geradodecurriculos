@@ -11,6 +11,8 @@ import Editor from './pages/Editor';
 import Admin from './pages/Admin';
 import { GlobalStyles } from './styles/GlobalStyles';
 
+import { Analytics } from "@vercel/analytics/react"
+
 // Componente para rotas protegidas
 const PrivateRoute = ({ children }) => {
   const { currentUser } = useAuth();
@@ -25,38 +27,39 @@ const AdminRoute = ({ children }) => {
 function AppRoutes() {
   return (
     <Router>
+      <Analytics />
       <GlobalStyles />
       <Toaster position="top-center" containerClassName="no-print" />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
-        <Route 
-          path="/dashboard" 
+
+        <Route
+          path="/dashboard"
           element={
             <PrivateRoute>
               <Dashboard />
             </PrivateRoute>
-          } 
+          }
         />
-        
-        <Route 
-          path="/editor/:id" 
+
+        <Route
+          path="/editor/:id"
           element={
             <PrivateRoute>
               <Editor />
             </PrivateRoute>
-          } 
+          }
         />
-        
-        <Route 
-          path="/admin" 
+
+        <Route
+          path="/admin"
           element={
             <AdminRoute>
               <Admin />
             </AdminRoute>
-          } 
+          }
         />
       </Routes>
     </Router>

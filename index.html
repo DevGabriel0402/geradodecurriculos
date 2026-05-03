@@ -41,9 +41,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:wght@300;400;500;700;900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    <!-- Static Splash Screen -->
+    <style>
+      #static-splash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        transition: opacity 0.4s ease-out;
+      }
+      #static-splash img {
+        height: 100px;
+        animation: pulse 2s infinite ease-in-out;
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+      }
+    </style>
   </head>
   <body>
+    <div id="static-splash">
+      <img src="/imagelogo.png" alt="Loading..." />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.addEventListener('load', () => {
+        const splash = document.getElementById('static-splash');
+        if (splash) {
+          setTimeout(() => {
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 400);
+          }, 500);
+        }
+      });
+    </script>
   </body>
 </html>

@@ -10,6 +10,8 @@ import {
 import { auth, googleProvider } from '../services/firebase';
 import { userService } from '../services/userService';
 
+import SplashScreen from '../components/common/SplashScreen';
+
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -54,7 +56,8 @@ export function AuthProvider({ children }) {
         console.error("Erro ao sincronizar perfil:", error);
         setCurrentUser(user);
       } finally {
-        setLoading(false);
+        // Simular um tempo extra para a splash ser visível e suave (opcional, mas bom para UX)
+        setTimeout(() => setLoading(false), 800);
       }
     });
 
@@ -71,7 +74,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <SplashScreen /> : children}
     </AuthContext.Provider>
   );
 }
